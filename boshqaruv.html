@@ -327,8 +327,15 @@ const LS_ADMIN_SESSION = "sysone-dangara-admin-session-v2";
 // --- TELEGRAM AUTH ---
 // TODO: BotFather'dan olgan tokenni shu yerga qo'ying (masalan: "123456789:AAExxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
 const TELEGRAM_BOT_TOKEN = "8953819968:AAFON33fb57iih4PhHPQJuAE50HQV0gr9yA";
-const TELEGRAM_CHAT_ID   = "1119174563";
-const TELEGRAM_ENABLED = TELEGRAM_BOT_TOKEN !== "YOUR_BOT_TOKEN" && TELEGRAM_CHAT_ID !== "YOUR_CHAT_ID";
+// Kirish kodi shu ro'yxatdagi HAR BIR admin'ga Telegram orqali yuboriladi.
+// 2-admin qo'shish uchun quyidagi qatorga uning Telegram chat_id raqamini yozing
+// (chat_id'ni bilish uchun @userinfobot botiga /start yozdiring — u sizga chat_id'ni qaytaradi).
+const TELEGRAM_CHAT_IDS = [
+  "1119174563",   // 1-admin
+  "1050640966"   // 2-admin — shu yerga uning chat_id raqamini qo'ying
+];
+const ACTIVE_TELEGRAM_CHAT_IDS = TELEGRAM_CHAT_IDS.filter(id => id && id !== "IKKINCHI_ADMIN_CHAT_ID" && id !== "YOUR_CHAT_ID");
+const TELEGRAM_ENABLED = TELEGRAM_BOT_TOKEN !== "YOUR_BOT_TOKEN" && ACTIVE_TELEGRAM_CHAT_IDS.length > 0;
 
 const warns = [];
 if(!FIREBASE_ENABLED) warns.push("⚠ Firebase ulanmagan.");
@@ -359,10 +366,15 @@ async function requestTelegramCode(){
   
   try{
     const text = encodeURIComponent(`🔐 SysOne Admin kirish kodi: ${code}\n\nAmal qilish muddati: 5 daqiqa.\nAgar bu siz bo'lmasangiz, bu xabarni e'tiborsiz qoldiring.`);
-    const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${text}`);
-    const j = await res.json();
-    if(!j.ok) throw new Error(j.description || 'Telegram xatosi');
-    
+    const results = await Promise.all(ACTIVE_TELEGRAM_CHAT_IDS.map(async chatId => {
+      try{
+        const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${chatId}&text=${text}`);
+        const j = await res.json();
+        return j.ok;
+      } catch(e){ return false; }
+    }));
+    if(!results.some(ok => ok)) throw new Error("Hech bir admin'ga yuborilmadi");
+
     document.getElementById('tg-step-1').style.display = 'none';
     document.getElementById('tg-step-2').style.display = 'block';
     document.getElementById('tg-code-input').focus();
