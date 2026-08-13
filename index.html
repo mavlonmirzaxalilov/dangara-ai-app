@@ -448,7 +448,7 @@ const BASE_MFY = [{"id":1,"name":"Qiyali","head":"Isroilov Qobuljon Mirzaliyevic
 const SPEC_COLORS = {"Dexqonchilik (poliz)":"#22C55E","Dexqonchilik (sabzavot)":"#16A34A","Dexqonchilik (loviya-mosh)":"#4ADE80","Dexqonchilik (issiqxona)":"#15803D","Sholichilik":"#84CC16","Xizmat ko'rsatish va savdo":"#A855F7","Xizmat ko'rsatish":"#C084FC","Kichik ishlab chiqarish":"#3B82F6","Tikuvchilik":"#EC4899","Hunarmandchilik (bo'yra to'qish)":"#F472B6","Chorvachilik":"#F59E0B","Uzumchilik":"#8B5CF6","Qandolatchilik va milliy shirinliklar i/ch":"#F43F5E"};
 function specLabel(key){ return key || '—'; }
 
-const FIREBASE_CONFIG = { apiKey: "YOUR_API_KEY", authDomain: "YOUR_PROJECT.firebaseapp.com", projectId: "YOUR_PROJECT" };
+const FIREBASE_CONFIG = { apiKey: "AIzaSyBrEny24RxIR_fliLyEWBH5iNdtvTq_GfI", authDomain: "dangara-drayver.firebaseapp.com", projectId: "dangara-drayver", storageBucket: "dangara-drayver.firebasestorage.app", messagingSenderId: "138482671133", appId: "1:138482671133:web:63ccf81b3e43b420a2b0f4" };
 const FIREBASE_ENABLED = !!(window.firebase && FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY");
 let db = null; 
 if(FIREBASE_ENABLED){ firebase.initializeApp(FIREBASE_CONFIG); db = firebase.firestore(); }
